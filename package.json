@@ -19,23 +19,6 @@
         "config": "https://github.com/levexis/node-config/tarball/master",
         "express": "latest",
         "express-useragent": "latest",
-        "underscore": "latest",
-        "grunt-cli": "latest",
-        "grunt": "latest",
-        "grunt-mocha-cli": "latest",
-        "grunt-contrib-copy": "latest",
-        "grunt-contrib-jshint": "latest",
-        "grunt-contrib-watch": "latest",
-        "grunt-contrib-uglify": "latest",
-        "grunt-contrib-clean": "latest"
-    },
-    "devDependencies": {
-        "chai": "latest",
-        "mocha": "latest",
-        "nodemon": "latest",
-        "sinon": "latest",
-        "sinon-chai": "latest",
-        "chai-as-promised": "latest",
-        "q": "latest"
+        "cookie-parser": "latest"
     }
 }

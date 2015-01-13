@@ -13,17 +13,17 @@ exports = module.exports = {
 
         //express newbie, not sure why hostname, port and protocol are missing, [1] = host [2] = port:
         var hostPort = /([^:]*)(.*)/.exec(req.headers.host);
-        var message;
-        if ( hostPort[1] !== CONFIG.web.hostname ) { // req.protocol !== CONFIG.web.protocol, need to look at this!
-            var url = '//' + CONFIG.web.hostname + ( hostPort[2] ? hostPort[2] : '') + req.originalUrl;
+        if ( hostPort[1] !== CONFIG.web.hostname && req.isCaptive && !req.cookies.state ) {
+            var url = '//' + CONFIG.web.hostname + ( hostPort[2] ? hostPort[2] : '') + CONFIG.web.loginPage;
             res.header('Location', url);
             res.status(302);
             res.end();
-            message = 'redirecting request ' + req.headers.host + req.originalUrl + ' to ' + url;
+            message = 'redirecting captiveRequest ' + req.headers.host + req.originalUrl + ' to ' + url;
         }
         return next(message);
     },
     log : function (req, res, next) {
+
         var clientIP = req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
@@ -31,17 +31,20 @@ exports = module.exports = {
             isHostIp = /^(\d+)\.(\d+).(\d+).(\d+)/.exec(req.headers.host) ? true : false,
             hostPort = /([^:]*)(.*)/.exec(req.headers.host ),
             isHostApp = (hostPort[1] !== CONFIG.web.hostname),
-            lastRequestTime = lastRequest[clientIP] ? new Date().getTime() - lastRequest[clientIP] : 0 ;
+            lastRequestTime = lastRequest[clientIP] ? new Date().getTime() - lastRequest[clientIP] : 0,
+            stateCookie = req.cookies? req.cookies.state : false;
         // add captivePortal flag
         req.useragent.isCaptive = /CaptiveNetworkSupport/.test( req.useragent.source );
         //console.log( 'domain middleware' ,isHostApp, req.headers.host , req.originalUrl, hostPort, clientIP,isHostIp);
         //console.log( 'user agent' , req.useragent.isCaptive);
         //console.log( 'lastrequest' , lastRequestTime );
-        console.log( req.useragent.isCaptive,  lastRequestTime, req.originalUrl, clientIP, isHostIp )
+        console.log( req.useragent.isCaptive,  lastRequestTime, req.originalUrl, clientIP, isHostIp, stateCookie )
 
         lastRequest[clientIP] = new Date().getTime();
         req.isHostIp = isHostIp;
         req.isAppHost = isHostIp;
+        res.cookie('state',req.originalUrl, { maxAge: 24*60*60, httpOnly: false });
+
         return next();
     }
     // if isCaptive and not "logged in" then return redirect to /login.html

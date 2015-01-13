@@ -2,6 +2,7 @@ var express = require('express' ),
     CONFIG = require('config'),
     app = express(),
     domain = require('./middleware/mid-domain' ),
+    cookies = require('cookie-parser'),
     useragent = require('express-useragent');
 
 function _configureApp() {
@@ -9,8 +10,12 @@ function _configureApp() {
      * Middleware
      */
     app.use(useragent.express());
+// need cookieParser middleware before we can do anything with cookies
+    app.use( cookies() );
     app.use(domain.log);
+    app.use(domain.autoRedirect);
     app.use(express.static(__dirname + CONFIG.web.staticDir, { maxAge: CONFIG.web.staticCacheable })); // allow static content to be cached for a week
+
 
     //app.use(express.compress);
 //    app.use(express.cookieParser());
