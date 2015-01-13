@@ -1,0 +1,42 @@
+#auto lo
+
+#iface lo inet loopback
+#iface eth0 inet static
+#address 192.168.1.50
+#netmask 255.255.255.0
+#gateway 192.168.1.254
+
+#allow-hotplug wlan0
+#iface wlan0 inet static
+#address 192.168.1.51
+#netmask 255.255.255.0
+#gateway 192.168.1.254
+
+#wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+#iface default inet static
+#address 192.168.1.52
+#netmask 255.255.255.0
+#gateway 192.168.1.254
+
+#config for acting as a router
+# interfaces(5) file used by ifup(8) and ifdown(8)
+
+auto lo
+iface lo inet loopback
+
+#Onboard NIC connecting to the Internet
+auto eth0
+#iface eth0 inet dhcp
+#have put on 50 so I know where it is
+iface eth0 inet static
+address 192.168.1.50
+netmask 255.255.255.0
+gateway 192.168.1.254
+
+#USB NIC serving as internal gateway
+#allow-hotplug wlan0
+auto wlan0
+iface wlan0 inet static
+address 192.168.69.1
+netmask 255.255.255.0
+gateway 192.168.69.5

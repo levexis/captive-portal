@@ -1,0 +1,45 @@
+{
+    "title": "Captive Portal",
+    "name": "captive-portal",
+    "description": "NodeJS Captive Portal",
+    "version": "0.0.1",
+    "author": "Daddyswork",
+    "homepage": "http://daddyswork.com",
+    "private": true,
+    "contributors": [
+        "Paul Cook <levexis@googlemail.com> (http://linkedin.com/in/adtechzen)"
+    ],
+    "engines": {
+        "node": "0.10.28"
+    },
+    "scripts": {
+        "start": "node app.js",
+    },
+    "dependencies": {
+        "config": "https://github.com/levexis/node-config/tarball/master",
+        "express": "latest",
+        "connect-mongo": "latest",
+        "underscore": "latest",
+        "mongoose": "3.6.x",
+        "mongodb": "latest",
+        "async": "latest",
+        "form-data": "latest",
+        "grunt-cli": "latest",
+        "grunt": "latest",
+        "grunt-mocha-cli": "latest",
+        "grunt-contrib-copy": "latest",
+        "grunt-contrib-jshint": "latest",
+        "grunt-contrib-watch": "latest",
+        "grunt-contrib-uglify": "latest",
+        "grunt-contrib-clean": "latest"
+    },
+    "devDependencies": {
+        "chai": "latest",
+        "mocha": "latest",
+        "nodemon": "latest",
+        "sinon": "latest",
+        "sinon-chai": "latest",
+        "chai-as-promised": "latest",
+        "q": "latest"
+    }
+}

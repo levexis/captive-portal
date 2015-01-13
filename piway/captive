@@ -1,0 +1,28 @@
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	ServerName google.com
+	ServerName www.google.com
+	ServerAlias captive.apple.com
+	ServerAlias apple.com
+	ServerAlias www.apple.com
+	ServerAlias www.ibook.info
+	ServerAlias home.numbertennis.com
+
+	DocumentRoot /var/www/number-tennis
+
+	RewriteEngine  on
+	RewriteCond %{HTTP_USER_AGENT}  ^CaptiveNetworkSupport(.*)$
+	RewriteRule ^(.+)/(.+).html$         http://start.me/          [L,R=302]
+	
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

@@ -1,0 +1,46 @@
+How to create a wifi hotspot with a pi
+
+iptables
+ sudo iptables-save > /etc/iptables.up.rules
+ nano /etc/network/if-pre-up.d/iptables
+ sudo chown root:root /etc/network/if-pre-up.d/iptables && sudo chmod +x /etc/network/if-pre-up.d/iptables && sudo chmod 755 /etc/network/if-pre-up.d/iptables
+dhcpd
+ sudo apt-get install dhcpd
+ sudo service isc-dhcp-server stop
+ sudo service isc-dhcp-server start
+apache rewrite
+ sudo a2ensite start.me
+ sudo a2ensite captive
+ sudo apache2ctl restart
+dnsmasq
+ sudo apt-get install dnsmasq
+ sudo /etc/init.d/dnsmasq restart
+hostapd
+ sudo apt-get install hostapd
+ sudo service hostapd restart
+
+Debugging
+dns
+ sudo apt-get install bind9 bind9utils dnsutils
+disable bind
+ sudo update-rc.d remove bind9
+ sudo update-rc.d -f remove bind9
+ sudo update-rc.d -f bind9 remove
+ dig start.me
+
+wireless 
+ sudo apt-get install wireless-tools
+ iw
+ ifconfig wlan0 192.168.1.5
+
+routing
+ sudo apt-get install tcpdump
+ sudo tcpdump -i wlan0
+ 
+Not used
+mitmproxy can be used to intercept requests but used dns and ip tables to just send the traffic to local server.
+
+
+TBD
+Using nodejs instead of apache for an active captive portal
+Need to cycle wireless channels and configs
