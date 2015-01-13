@@ -12,7 +12,8 @@ exports = module.exports = {
     autoRedirect : function (req, res, next) {
 
         //express newbie, not sure why hostname, port and protocol are missing, [1] = host [2] = port:
-        var hostPort = /([^:]*)(.*)/.exec(req.headers.host);
+        var hostPort = /([^:]*)(.*)/.exec(req.headers.host ),
+            message;
         if ( hostPort[1] !== CONFIG.web.hostname && req.isCaptive && !req.cookies.state ) {
             var url = '//' + CONFIG.web.hostname + ( hostPort[2] ? hostPort[2] : '') + CONFIG.web.loginPage;
             res.header('Location', url);
