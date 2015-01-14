@@ -1,6 +1,8 @@
 /* checks the domain matches what is in CONFIG.web.hostname & web.protocol and if not then redirects them */
 
 var CONFIG = require('config');
+var macfromip = require('../macfromip/macfromip');
+
 var lastRequest = {};
 exports = module.exports = {
     /**
@@ -15,24 +17,33 @@ exports = module.exports = {
         var hostPort = /([^:]*)(.*)/.exec(req.headers.host ),
             message,
             url;
-        // redirect to actual domain
+        // iOS captive portal
         if ( hostPort[1] !== CONFIG.web.hostname && req.useragent.isCaptive ) {
-            console.log('debug1',hostPort[1] , CONFIG.web.hostname);
-            url = '//' + CONFIG.web.hostname  + ( hostPort[2] ? hostPort[2] : '');
-            res.header('Location', url);
-            res.status(302);
-            res.end();
+            console.log( 'debug1', hostPort[1], CONFIG.web.hostname );
+            if ( CONFIG.web.loginPage ) {
+                url = 'http://' + CONFIG.web.hostname + ( hostPort[2] ? hostPort[2] : '');
+            } else {
+                res.send( 'success' );
+//                res.end();
+                message = 'return success for CaptiveRequest';
+                console.log( message );
+            }
+            // android active portal
+        } else if ( req.path === '/generate_204' && req.cookies.state ) {
+            res.status( 204 ).send( 'success');
+//            res.end();
         // redirect to login page if no cookie
         } else  if ( !req.cookies.state &&
             CONFIG.web.loginPage &&
+            req.path !== CONFIG.web.loginPage &&
             req.originalUrl !== CONFIG.web.hostname  + ( hostPort[2] ? hostPort[2] : '') + CONFIG.web.loginPage ) {
             console.log('debug2',hostPort[1] , req.originalUrl ,CONFIG.web.hostname  + ( hostPort[2] ? hostPort[2] : '') + CONFIG.web.loginPage );
-            url = CONFIG.web.loginPage ;
+            url = 'http://' + CONFIG.web.hostname  + ( hostPort[2] ? hostPort[2] : '') + CONFIG.web.loginPage ;
         }
         if ( url ) {
             res.header('Location', url);
             res.status(302);
-            res.end();
+//            res.end();
             message = 'redirecting ' + req.headers.host + req.originalUrl + ' to ' + url;
             console.log(message);
         }
@@ -54,13 +65,16 @@ exports = module.exports = {
         //console.log( 'domain middleware' ,isHostApp, req.headers.host , req.originalUrl, hostPort, clientIP,isHostIp);
         //console.log( 'user agent' , req.useragent.isCaptive);
         //console.log( 'lastrequest' , lastRequestTime );
-        console.log( req.useragent.isCaptive,  lastRequestTime, req.originalUrl, clientIP, isHostIp, stateCookie )
+        console.log( req.useragent.isCaptive,  lastRequestTime, req.originalUrl, clientIP, isHostIp, stateCookie, req.useragent.OS, req.useragent.Browser, req.useragent.isMobile, req.useragent.isTablet );
 
         lastRequest[clientIP] = new Date().getTime();
         req.isHostIp = isHostIp;
         req.isAppHost = isHostIp;
         res.cookie('state',req.originalUrl, { maxAge: 24*60*60, httpOnly: false });
 
+        macfromip.getMac(clientIP, function(data){
+            console.log('mac', data);
+        });
         return next();
     }
     // if isCaptive and not "logged in" then return redirect to /login.html
