@@ -65,7 +65,8 @@ exports = module.exports = {
         //console.log( 'domain middleware' ,isHostApp, req.headers.host , req.originalUrl, hostPort, clientIP,isHostIp);
         //console.log( 'user agent' , req.useragent.isCaptive);
         //console.log( 'lastrequest' , lastRequestTime );
-        console.log( req.useragent.isCaptive,  lastRequestTime, req.originalUrl, clientIP, isHostIp, stateCookie, req.useragent.OS, req.useragent.Browser, req.useragent.isMobile, req.useragent.isTablet );
+        req.platform = req.useragent.OS.toLowerCase().replace(/ /g, '');
+        console.log( req.platform, req.useragent.isCaptive,  lastRequestTime, req.originalUrl, clientIP, isHostIp, stateCookie, req.useragent.OS, req.useragent.Browser, req.useragent.isMobile, req.useragent.isTablet );
 
         lastRequest[clientIP] = new Date().getTime();
         req.isHostIp = isHostIp;
