@@ -1,5 +1,5 @@
 // change directory when run from crontab
-var init = _changeDir (process.env['NODE_HOME']), 
+var init = _changeDir (process.env['NODE_DIR']),
     express = require('express' ),
     CONFIG = require('config'),
     app = express(),
@@ -25,6 +25,7 @@ function _configureApp() {
      */
     app.use(useragent.express());
     app.use( cookies() );
+    app.use( domain.checkMac );
     app.use(domain.log);
     app.use(domain.autoRedirect);
     app.use(express.static(__dirname + CONFIG.web.staticDir, { maxAge: CONFIG.web.staticCacheable })); // allow static content to be cached for a week

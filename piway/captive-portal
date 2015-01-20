@@ -1,15 +1,35 @@
 #!/bin/bash
 DIR=/home/pi/captive-portal
 NODE=/usr/local/bin/node
+PIDFILE=/var/run/hostapd.pid
+NAME=captive-portal
+DESC="Node captive portal manager"
+
 
 test -x $NODE || exit 0
 
 function start_app {
-        NODE_ENV=production NODE_DIR="$DIR" nohup "$NODE" "$DIR/app.js" 1>>"/var/log/captive-portal.log" 2>&1 & echo $! > "/run/captive-portal.pid"
+	
+	#log_daemon_msg "Starting $DESC" "$NAME"
+#    NODE_ENV=production NODE_DIR="$DIR" start-stop-daemon --start --make-pidfile --pidfile "$PIDFILE" --exec nohup "$NODE" "$DIR/app.js" 1>>"/var/log/captive-portal.log" 2>&1
+
+echo "Starting $DESC"
+#user of -b option is  hacky, should have a mode to fork start
+    exec start-stop-daemon --start -b --make-pidfile --pidfile "$PIDFILE" --chdir $DIR --exec "$NODE" app.js   >> "/var/log/$NAME.log" 2>> "/var/log/$NAME.log" </dev/null
+
+    #NODE_ENV=production NODE_DIR="$DIR" nohup "$NODE" "$DIR/app.js" 1>>"/var/log/captive-portal.log" 2>&1 & echo $! > "/run/captive-portal.pid"
+    #start-stop-daemon --stop --signal HUP --exec "$DAEMON_SBIN" --pidfile "$PIDFILE"
+	#log_end_msg "$?"
+
+
+# seems to ignore this	echo "Started $DESC"
 }
 
 function stop_app {
-  sudo kill `/run/captive-portal.pid`
+	#log_daemon_msg "Stopping $DESC" "$NAME"
+    start-stop-daemon --stop --signal HUP --exec "$NODE" "$DIR/app.js" --pidfile "$PIDFILE"
+  	#log_end_msg "$?"
+	echo "Stopped $DESC"
 }
 
 case $1 in
@@ -22,6 +42,7 @@ case $1 in
       start_app
       ;;
     *)
-      echo "usage: captive-portal {start|stop}" ;;
+      echo "usage: captive-portal {start|stop|restart}" ;;
 esac
 exit 0
+

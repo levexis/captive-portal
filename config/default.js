@@ -4,7 +4,15 @@ var config = {
         hostname: 'start.me',
         port: 9000,
         staticDir: '/public', // this is what gets exposed
-        loginPage: '/login.html',
+        ios: {
+            loginPage : '/login.html?ios'
+        },
+        osx: {
+            loginPage : '/login.html?osx'
+        },
+        android: {
+            loginPage : '/login.html?android'
+        },
 //        startPage: '/start.html', not needed can specify target etc in login page
         staticCacheable: 0
     }
